@@ -120,7 +120,7 @@ if __name__ == '__main__':
     loss = Loss()
     reid = Main(model, loss, loader)
     data_dir = opt.data_path.split('/')[-1]
-    os.makedirs('weights/' + data_dir)
+    os.mkdir('weights/' + data_dir)
 
     if opt.mode == 'train':
 
