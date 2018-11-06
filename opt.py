@@ -48,4 +48,8 @@ parser.add_argument("--batchtest",
                     default=8,
                     help='the batch size for test')
 
+parser.add_argument("--gpuid",
+                    default='0',
+                    help='gpu id')
+
 opt = parser.parse_args()
