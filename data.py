@@ -26,7 +26,6 @@ class Data:
         self.trainset = Market1501(train_transform, 'train',opt.data_path)
         self.testset = Market1501(test_transform, 'test',opt.data_path)
         self.queryset = Market1501(test_transform, 'query',opt.data_path)
-        print('batchid', opt.batchid)
         self.train_loader = dataloader.DataLoader(self.trainset,
                                                   sampler=RandomSampler(self.trainset, batch_id=opt.batchid, batch_image=opt.batchimage),
                                                   batch_size=opt.batchid*opt.batchimage, num_workers=8,pin_memory=True)

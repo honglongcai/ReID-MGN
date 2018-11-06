@@ -36,6 +36,7 @@ parser.add_argument('--lr_scheduler',
                     help='MultiStepLR')
 
 parser.add_argument("--batchid",
+                    type = int,
                     default=4,
                     help='the batch for id')
 
