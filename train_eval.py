@@ -119,11 +119,11 @@ if __name__ == '__main__':
     model = MGN()
     loss = Loss()
     reid = Main(model, loss, loader)
-    print(opt.data_path)
-    data_dir = opt.data_path.split('/')[-1]
-    print(data_dir)
+    #print(opt.data_path)
+    data_dir = opt.data_path.split('/')[-2]
+    #print(data_dir)
     model_dir = 'weights/' + data_dir
-    print(model_dir)
+    #print(model_dir)
     os.mkdir(model_dir)
 
     if opt.mode == 'train':
