@@ -119,6 +119,8 @@ if __name__ == '__main__':
     model = MGN()
     loss = Loss()
     reid = Main(model, loss, loader)
+    data_dir = opt.data_path.split('/')[-1]
+    os.mkdirs('weights/' + data_dir)
 
     if opt.mode == 'train':
 
@@ -128,7 +130,7 @@ if __name__ == '__main__':
             if epoch % 50 == 0:
                 print('\nstart evaluate')
                 reid.test()
-                torch.save(model.state_dict(), ('weights/model_{}.pt'.format(epoch)))
+                torch.save(model.state_dict(), ('weights/' + data_dir + '/model_{}.pt'.format(epoch)))
 
     if opt.mode == 'evaluate':
         print('start evaluate')
