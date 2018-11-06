@@ -124,7 +124,8 @@ if __name__ == '__main__':
     #print(data_dir)
     model_dir = 'weights/' + data_dir
     #print(model_dir)
-    os.mkdir(model_dir)
+    if not os.path.exists(model_dir):
+        os.mkdir(model_dir)
 
     if opt.mode == 'train':
 
