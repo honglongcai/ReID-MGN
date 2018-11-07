@@ -38,7 +38,7 @@ class Main():
             labels = labels.to('cuda')
             self.optimizer.zero_grad()
             outputs = self.model(inputs)
-            print('outputs:', outputs.cpu().numpy())
+            print('outputs:', len(outputs))
             loss = self.loss(outputs, labels)
             loss.backward()
             self.optimizer.step()
