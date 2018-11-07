@@ -32,19 +32,12 @@ class Main():
 
         self.model.train()
         for batch, (inputs, labels) in enumerate(self.train_loader):
-            print('inputs:', inputs)
-            print('labels:', labels)
-            print('intputs_size:', inputs.size())
             inputs = inputs.to('cuda')
             labels = labels.to('cuda')
             self.optimizer.zero_grad()
             outputs = self.model(inputs)
-            print('outputs_len:', len(outputs))
-            print('outputs:', outputs)
             loss = self.loss(outputs, labels)
-            print('8:')
             loss.backward()
-            print('9:')
             self.optimizer.step()
 
     def test(self):
@@ -137,7 +130,6 @@ if __name__ == '__main__':
     #print(model_dir)
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
-    print(model_dir)
     if opt.mode == 'train':
 
         for epoch in range(1, opt.epoch+1):

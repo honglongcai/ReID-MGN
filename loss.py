@@ -9,22 +9,15 @@ class Loss(nn.modules.loss._Loss):
     def forward(self, outputs, labels):
         cross_entropy_loss = nn.CrossEntropyLoss()
         triplet_loss = TripletLoss(margin=1.2)
-        print('1:')
         Triplet_Loss = [triplet_loss(output, labels) for output in outputs[1:4]]
-        print('2:')
         Triplet_Loss = sum(Triplet_Loss) / len(Triplet_Loss)
-        print('3:')
         CrossEntropy_Loss = [cross_entropy_loss(output, labels) for output in outputs[4:]]
-        print('4:')
         CrossEntropy_Loss = sum(CrossEntropy_Loss) / len(CrossEntropy_Loss)
-        print('5:')
         loss_sum =Triplet_Loss + 2* CrossEntropy_Loss
-        print('6:')
         print('\rtotal loss:%.2f  Triplet_Loss:%.2f  CrossEntropy_Loss:%.2f'%(
                 loss_sum.data.cpu().numpy(),
                 Triplet_Loss.data.cpu().numpy(),
                 CrossEntropy_Loss.data.cpu().numpy()), end=' ')
-        print('7:')
         return loss_sum
 
 
