@@ -24,8 +24,11 @@ class Data:
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
         self.trainset = Market1501(train_transform, 'train',opt.data_path)
+        print('train_len:', len(self.trainset))
         self.testset = Market1501(test_transform, 'test',opt.data_path)
+        print('test_len:', len(self.testset))
         self.queryset = Market1501(test_transform, 'query',opt.data_path)
+        print('query_len:', len(self.queryset))
         self.train_loader = dataloader.DataLoader(self.trainset,
                                                   sampler=RandomSampler(self.trainset, batch_id=opt.batchid, batch_image=opt.batchimage),
                                                   batch_size=opt.batchid*opt.batchimage, num_workers=8,pin_memory=True)
