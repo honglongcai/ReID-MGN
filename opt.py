@@ -28,6 +28,7 @@ parser.add_argument('--epoch',
                     help='number of epoch to train')
 
 parser.add_argument('--lr',
+                    type=float,
                     default=2e-4,
                     help='learning_rate')
 
