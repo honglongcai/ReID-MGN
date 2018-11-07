@@ -24,6 +24,7 @@ class Loss(nn.modules.loss._Loss):
                 loss_sum.data.cpu().numpy(),
                 Triplet_Loss.data.cpu().numpy(),
                 CrossEntropy_Loss.data.cpu().numpy()), end=' ')
+        print('7:')
         return loss_sum
 
 

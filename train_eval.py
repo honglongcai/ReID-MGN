@@ -38,9 +38,11 @@ class Main():
             labels = labels.to('cuda')
             self.optimizer.zero_grad()
             outputs = self.model(inputs)
-            print('outputs:', len(outputs))
+            print('outputs:', outputs)
             loss = self.loss(outputs, labels)
+            print('8:')
             loss.backward()
+            print('9:')
             self.optimizer.step()
 
     def test(self):
