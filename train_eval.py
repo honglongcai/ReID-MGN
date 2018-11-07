@@ -129,7 +129,7 @@ if __name__ == '__main__':
     sch = ''
     for i in opt.lr_scheduler:
         sch = sch + str(i) + '_'
-    #model_dir = 'weights/' + data_dir + '/' + sch
+    model_dir = 'weights/' + data_dir + '/' + sch
     #print(model_dir)
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
