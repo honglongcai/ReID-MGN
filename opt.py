@@ -54,5 +54,9 @@ parser.add_argument("--batchtest",
 parser.add_argument("--gpuid",
                     default='0',
                     help='gpu id')
+parser.add_argument("--gamma",
+                    type=float,
+                    defaut=0.1,
+                    help="lr_scheduler gamma")
 
 opt = parser.parse_args()

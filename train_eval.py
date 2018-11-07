@@ -24,7 +24,7 @@ class Main():
         self.model = model.to('cuda')
         self.loss = loss
         self.optimizer = self.get_optimizer(model)
-        self.scheduler = lr_scheduler.MultiStepLR(self.optimizer, milestones=opt.lr_scheduler, gamma=0.1)
+        self.scheduler = lr_scheduler.MultiStepLR(self.optimizer, milestones=opt.lr_scheduler, gamma=opt.gamma)
 
     def train(self):
 
