@@ -32,8 +32,8 @@ parser.add_argument('--lr',
                     help='learning_rate')
 
 parser.add_argument('--lr_scheduler',
-                    type=int,
-                    nargs='+',
+                    #type=int,
+                    #nargs='+',
                     default=[320, 380],
                     help='MultiStepLR')
 

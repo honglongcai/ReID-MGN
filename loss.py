@@ -21,8 +21,7 @@ class Loss(nn.modules.loss._Loss):
         print('\rtotal loss:%.2f  Triplet_Loss:%.2f  CrossEntropy_Loss:%.2f'%(
                 loss_sum.data.cpu().numpy(),
                 Triplet_Loss.data.cpu().numpy(),
-                CrossEntropy_Loss.data.cpu().numpy()),
-                end=' ')
+                CrossEntropy_Loss.data.cpu().numpy()), end=' ')
         return loss_sum
 
 
