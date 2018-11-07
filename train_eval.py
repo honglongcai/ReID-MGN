@@ -130,7 +130,7 @@ if __name__ == '__main__':
     #print(model_dir)
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
-
+    print(model_dir)
     if opt.mode == 'train':
 
         for epoch in range(1, opt.epoch+1):
