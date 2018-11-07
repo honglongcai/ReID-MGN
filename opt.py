@@ -56,7 +56,7 @@ parser.add_argument("--gpuid",
                     help='gpu id')
 parser.add_argument("--gamma",
                     type=float,
-                    defaut=0.1,
+                    default=0.1,
                     help="lr_scheduler gamma")
 
 opt = parser.parse_args()
