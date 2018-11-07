@@ -32,10 +32,13 @@ class Main():
 
         self.model.train()
         for batch, (inputs, labels) in enumerate(self.train_loader):
+            print('inputs:', inputs)
+            print('labels:', labels)
             inputs = inputs.to('cuda')
             labels = labels.to('cuda')
             self.optimizer.zero_grad()
             outputs = self.model(inputs)
+            print('outputs:', outputs.cpu().numpy())
             loss = self.loss(outputs, labels)
             loss.backward()
             self.optimizer.step()
@@ -126,7 +129,7 @@ if __name__ == '__main__':
     sch = ''
     for i in opt.lr_scheduler:
         sch = sch + str(i) + '_'
-    model_dir = 'weights/' + data_dir + '/' + sch
+    #model_dir = 'weights/' + data_dir + '/' + sch
     #print(model_dir)
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
