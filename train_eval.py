@@ -122,8 +122,11 @@ if __name__ == '__main__':
     #print(opt.data_path)
     data_dir = opt.data_path.split('/')[-2]
     #print(data_dir)
-    print(opt.lr_scheduler)
-    model_dir = 'weights/' + data_dir
+    #print(opt.lr_scheduler)
+    sch = ''
+    for i in opt.lr_scheduler:
+        sch = sch + str(i) + '_'
+    model_dir = 'weights/' + data_dir + '/' + sch
     #print(model_dir)
     if not os.path.exists(model_dir):
         os.makedirs(model_dir)
@@ -136,7 +139,7 @@ if __name__ == '__main__':
             if epoch % 50 == 0:
                 print('\nstart evaluate')
                 reid.test()
-                torch.save(model.state_dict(), ('weights/' + data_dir + '/model_{}.pt'.format(epoch)))
+                torch.save(model.state_dict(), (model_dir + '/model_{}.pt'.format(epoch)))
 
     if opt.mode == 'evaluate':
         print('start evaluate')
