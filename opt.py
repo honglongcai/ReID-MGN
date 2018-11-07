@@ -32,7 +32,7 @@ parser.add_argument('--lr',
                     help='learning_rate')
 
 parser.add_argument('--lr_scheduler',
-                    tpye=int,
+                    type=int,
                     nargs='+',
                     default=[320, 380],
                     help='MultiStepLR')
