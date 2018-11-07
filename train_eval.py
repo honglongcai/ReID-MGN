@@ -10,7 +10,7 @@ from data import Data
 from network import MGN
 from loss import Loss
 from functions import mean_ap, cmc, re_ranking
-os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpuid
+#os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpuid
 
 
 class Main():
