@@ -32,11 +32,13 @@ parser.add_argument('--lr',
                     help='learning_rate')
 
 parser.add_argument('--lr_scheduler',
+                    tpye=int,
+                    nargs='+',
                     default=[320, 380],
                     help='MultiStepLR')
 
 parser.add_argument("--batchid",
-                    type = int,
+                    type=int,
                     default=4,
                     help='the batch for id')
 

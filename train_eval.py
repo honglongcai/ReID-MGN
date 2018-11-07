@@ -122,10 +122,11 @@ if __name__ == '__main__':
     #print(opt.data_path)
     data_dir = opt.data_path.split('/')[-2]
     #print(data_dir)
+    print(opt.lr_scheduler)
     model_dir = 'weights/' + data_dir
     #print(model_dir)
     if not os.path.exists(model_dir):
-        os.mkdir(model_dir)
+        os.makedirs(model_dir)
 
     if opt.mode == 'train':
 
