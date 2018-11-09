@@ -24,6 +24,7 @@ parser.add_argument('--weight',
                     help='load weights ')
 
 parser.add_argument('--epoch',
+                    type=int,
                     default=400,
                     help='number of epoch to train')
 
