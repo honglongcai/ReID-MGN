@@ -103,7 +103,8 @@ class Main():
             for i in range(2):
                 if i == 1:
                     inputs = self.fliphor(inputs)
-                print('input_shape:', inputs.shape)
+                if i == 0:
+                    print('input_shape:', inputs)
                 input_img = inputs.to('cuda')
                 outputs = self.model(input_img)
                 f = outputs[0].data.cpu()
