@@ -98,6 +98,7 @@ class Main():
     def extract_feature(self, loader):
         features = torch.FloatTensor()
         for (inputs, labels) in loader:
+            print('labels:', labels)
             ff = torch.FloatTensor(inputs.size(0), 2048).zero_()
             for i in range(2):
                 if i == 1:
