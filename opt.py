@@ -55,6 +55,7 @@ parser.add_argument("--batchtest",
 parser.add_argument("--gpuid",
                     default='0,1',
                     help='gpu id')
+
 parser.add_argument("--gamma",
                     type=float,
                     default=0.1,

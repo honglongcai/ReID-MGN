@@ -124,6 +124,7 @@ if __name__ == '__main__':
 
     loader = Data()
     model = MGN()
+    model = torch.nn.DataParallel(model)
     loss = Loss()
     reid = Main(model, loss, loader)
     #print(opt.data_path)
