@@ -125,7 +125,7 @@ if __name__ == '__main__':
     loader = Data()
     model = MGN()
     print(torch.cuda.device_count())
-    model = torch.nn.DataParallel(model)
+    model = torch.nn.DataParallel(model, output_device=[0,1,2,3])
     loss = Loss()
     reid = Main(model, loss, loader)
     #print(opt.data_path)
