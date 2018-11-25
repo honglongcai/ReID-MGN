@@ -87,9 +87,9 @@ class MGN(nn.Module):
         nn.init.constant_(fc.bias, 0.)
 
     def forward(self, x):
-        print(x)
-        print('inside input size:', x.size())
-        print()
+        #print(x)
+        #print('inside input size:', x.size())
+        #print()
         x = self.backbone(x)
 
         p1 = self.p1(x)
