@@ -32,8 +32,8 @@ class Main():
 
         self.model.train()
         for batch, (inputs, labels) in enumerate(self.train_loader):
-            inputs = inputs.to('cuda')
-            labels = labels.to('cuda')
+            inputs = inputs.to('cuda:1')
+            labels = labels.to('cuda:1')
             #print(inputs)
             #print(labels)
             #print('inputs size:', inputs.size())
