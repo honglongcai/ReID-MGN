@@ -21,7 +21,7 @@ class Main():
         self.testset = loader.testset
         self.queryset = loader.queryset
 
-        self.model = model.to('cuda:3')
+        self.model = model.to('cuda:0')
         self.loss = loss
         self.optimizer = self.get_optimizer(model)
         self.scheduler = lr_scheduler.MultiStepLR(self.optimizer, milestones=opt.lr_scheduler, gamma=opt.gamma)
