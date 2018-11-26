@@ -103,21 +103,21 @@ class Main():
     def extract_feature(self, loader):
         features = torch.FloatTensor()
         for (inputs, labels) in loader:
-            print('labels:', labels)
+            #print('labels:', labels)
             ff = torch.FloatTensor(inputs.size(0), 2048).zero_()
             for i in range(2):
                 if i == 1:
                     inputs = self.fliphor(inputs)
-                if i == 0:
-                    print('input_shape:', inputs)
+                #if i == 0:
+                    #print('input_shape:', inputs)
                 input_img = inputs.to('cuda')
                 outputs = self.model(input_img)
                 f = outputs[0].data.cpu()
-                print('f:', f)
+                #print('f:', f)
                 ff = ff + f
-                print('ff:', ff)
-            print()
-            print()
+                #print('ff:', ff)
+            #print()
+            #print()
 
             fnorm = torch.norm(ff, p=2, dim=1, keepdim=True)
             ff = ff.div(fnorm.expand_as(ff))
@@ -129,12 +129,12 @@ if __name__ == '__main__':
 
     loader = Data()
     model = MGN()
-    print(torch.cuda.device_count())
+    #print(torch.cuda.device_count())
     model = torch.nn.DataParallel(model, output_device=1)
     loss = Loss()
     reid = Main(model, loss, loader)
     #print(opt.data_path)
-    data_dir = opt.data_path.split('/')[-2]
+    data_dir = opt.data_path.split('/')[-1]
     #print(data_dir)
     #print(opt.lr_scheduler)
     sch = ''
