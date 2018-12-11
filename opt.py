@@ -45,10 +45,12 @@ parser.add_argument("--batchid",
                     help='the batch for id')
 
 parser.add_argument("--batchimage",
+                    type=int,
                     default=4,
                     help='the batch of per id')
 
 parser.add_argument("--batchtest",
+                    type=int,
                     default=8,
                     help='the batch size for test')
 
