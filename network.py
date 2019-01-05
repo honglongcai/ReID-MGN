@@ -9,7 +9,8 @@ class MGN(nn.Module):
     def __init__(self):
         super(MGN, self).__init__()
         #num_classes = 751
-        num_classes = 4101
+        #num_classes = 4101
+        num_classes = 7405
         feats = 256
         if opt.backbone == 'resnet50':
             resnet = resnet50(pretrained=True)
