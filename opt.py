@@ -63,4 +63,9 @@ parser.add_argument("--gamma",
                     default=0.1,
                     help="lr_scheduler gamma")
 
+parser.add_argument("--cls_num",
+                    type=int,
+                    default=7405,
+                    help="train set id number")
+
 opt = parser.parse_args()
