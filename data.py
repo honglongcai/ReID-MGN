@@ -140,7 +140,7 @@ class Market1501(dataset.Dataset):
         :return: camera id
         """
         #if opt.data_path == 'msmt17_suning55':
-        return int(file_path.split('/')[-1].split('_')[1])
+        return int(file_path.split('/')[-1].split('_')[1][1])
         #else:
          #   return int(file_path.split('/')[-1].split('_')[1][1])
 
