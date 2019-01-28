@@ -25,7 +25,7 @@ parser.add_argument('--weight',
 
 parser.add_argument('--epoch',
                     type=int,
-                    default=400,
+                    default=500,
                     help='number of epoch to train')
 
 parser.add_argument('--lr',
@@ -36,7 +36,7 @@ parser.add_argument('--lr',
 parser.add_argument('--lr_scheduler',
                     type=int,
                     nargs='+',
-                    default=[320, 380],
+                    default=[100, 200, 250, 300, 350, 400, 450],
                     help='MultiStepLR')
 
 parser.add_argument("--batchid",
@@ -60,7 +60,7 @@ parser.add_argument("--gpuid",
 
 parser.add_argument("--gamma",
                     type=float,
-                    default=0.1,
+                    default=0.5,
                     help="lr_scheduler gamma")
 
 parser.add_argument("--cls_num",
