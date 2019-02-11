@@ -9,13 +9,13 @@ from torchvision import transforms
 from torch.utils.data import dataset, dataloader, sampler
 from torchvision.datasets.folder import default_loader
 
-from cfg import cfg
+from opt import opt
 
 class Data:
     def __init__(self):
         train_transform = transforms.Compose([
             RandomE(lower_c=0.1, lower_p=0.9,
-                    upper_c=0.2, upper_p=0.8, ratio=cfg.h_ratio),
+                    upper_c=0.2, upper_p=0.8, ratio=0.1),
             transforms.Resize((384, 128), interpolation=3),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
@@ -28,17 +28,17 @@ class Data:
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
-        self.trainset = Reid_Dataset(train_transform, 'train',cfg.data_path)
+        self.trainset = Reid_Dataset(train_transform, 'train', opt.data_path)
         print('train_len:', len(self.trainset))
-        self.testset = Reid_Dataset(test_transform, 'test',cfg.data_path)
+        self.testset = Reid_Dataset(test_transform, 'test', opt.data_path)
         print('test_len:', len(self.testset))
-        self.queryset = Reid_Dataset(test_transform, 'query',cfg.data_path)
+        self.queryset = Reid_Dataset(test_transform, 'query', opt.data_path)
         print('query_len:', len(self.queryset))
         self.train_loader = dataloader.DataLoader(self.trainset,
-                                                  sampler=RandomSampler(self.trainset, batch_id=cfg.batchid, batch_image=cfg.batchimage),
-                                                  batch_size=cfg.batchid*cfg.batchimage, num_workers=8,pin_memory=True)
-        self.test_loader = dataloader.DataLoader(self.testset, batch_size=cfg.batchtest, num_workers=8,pin_memory=True)
-        self.query_loader = dataloader.DataLoader(self.queryset, batch_size=cfg.batchtest, num_workers=8,pin_memory=True)
+                                                  sampler=RandomSampler(self.trainset, batch_id=opt.batchid, batch_image=opt.batchimage),
+                                                  batch_size=opt.batchid*opt.batchimage, num_workers=8,pin_memory=True)
+        self.test_loader = dataloader.DataLoader(self.testset, batch_size=opt.batchtest, num_workers=8,pin_memory=True)
+        self.query_loader = dataloader.DataLoader(self.queryset, batch_size=opt.batchtest, num_workers=8,pin_memory=True)
 
 class RandomE():
     def __init__(self, lower_c=0.1, lower_p=0.2,
