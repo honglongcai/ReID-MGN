@@ -6,57 +6,73 @@ import numpy as np
 import PIL
 import collections
 from torchvision import transforms
-from torch.utils.data import dataset,dataloader,sampler
+from torch.utils.data import dataset, dataloader, sampler
 from torchvision.datasets.folder import default_loader
 
-from opt import opt
+from cfg import cfg
 
 class Data:
     def __init__(self):
         train_transform = transforms.Compose([
-            RandomE(lower=0.1, upper=0.9, ratio=0.1),
+            RandomE(lower_c=0.1, lower_p=0.9,
+                    upper_c=0.2, upper_p=0.8, ratio=cfg.h_ratio),
             transforms.Resize((384, 128), interpolation=3),
-            #transforms.RandomHorizontalFlip(),
+            transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            RandomErasing(probability=0.5, mean=[0.0, 0.0, 0.0])])
+            RandomErasing(probability=0.5, mean=[0.0, 0.0, 0.0]),
+            ])
 
         test_transform = transforms.Compose([
             transforms.Resize((384, 128), interpolation=3),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
-        self.trainset = Market1501(train_transform, 'train',opt.data_path)
+        self.trainset = Reid_Dataset(train_transform, 'train',cfg.data_path)
         print('train_len:', len(self.trainset))
-        self.testset = Market1501(test_transform, 'test',opt.data_path)
+        self.testset = Reid_Dataset(test_transform, 'test',cfg.data_path)
         print('test_len:', len(self.testset))
-        self.queryset = Market1501(test_transform, 'query',opt.data_path)
+        self.queryset = Reid_Dataset(test_transform, 'query',cfg.data_path)
         print('query_len:', len(self.queryset))
         self.train_loader = dataloader.DataLoader(self.trainset,
-                                                  sampler=RandomSampler(self.trainset, batch_id=opt.batchid, batch_image=opt.batchimage),
-                                                  batch_size=opt.batchid*opt.batchimage, num_workers=8,pin_memory=True)
-        self.test_loader = dataloader.DataLoader(self.testset, batch_size=opt.batchtest, num_workers=8,pin_memory=True)
-        self.query_loader = dataloader.DataLoader(self.queryset, batch_size=opt.batchtest, num_workers=8,pin_memory=True)
-
+                                                  sampler=RandomSampler(self.trainset, batch_id=cfg.batchid, batch_image=cfg.batchimage),
+                                                  batch_size=cfg.batchid*cfg.batchimage, num_workers=8,pin_memory=True)
+        self.test_loader = dataloader.DataLoader(self.testset, batch_size=cfg.batchtest, num_workers=8,pin_memory=True)
+        self.query_loader = dataloader.DataLoader(self.queryset, batch_size=cfg.batchtest, num_workers=8,pin_memory=True)
 
 class RandomE():
-    def __init__(self, lower=0.1, upper=0.9, ratio=0.1):
-        self.lower = lower
-        self.upper = upper
+    def __init__(self, lower_c=0.1, lower_p=0.2,
+                 upper_c=0.9, upper_p=0.8, ratio=0.10):
+        self.lower_c = lower_c
+        self.lower_p = lower_p
+        self.upper_c = upper_c
+        self.upper_p = upper_p
+        
         self.ratio = ratio
-    
+        
     def __call__(self, img):
         a = np.random.uniform()
-        img = np.asarray(img)
-        # print(img.shape)
-        h = img.shape[0]
-        if a < self.lower:
-            img = img[int(h * self.ratio):, :, :]
-        elif a > self.upper:
-            img = img[:int(h * (1 - self.ratio)), :, :]
-        img = PIL.Image.fromarray(img)
-        # print(img.size)
+        h = img.size[1]
+        r = np.random.uniform(0, self.ratio)
+        if a < 0.1:
+            img = PIL.ImageOps.expand(img, border=(0, int(h * r), 0, 0), fill='black')
+        elif a > 0.9:
+            img = PIL.ImageOps.expand(img, border=(0, 0, 0, int(h * r)), fill='black')
+        elif a < 0.2:
+            img = np.asarray(img)
+            s = int(h * r)
+            img = img[s:, :, :]
+            img = PIL.Image.fromarray(img)
+        elif a > 0.8:
+            img = np.asarray(img)
+            e = int(h * (1-r))
+            img = img[:e, :, :]
+            img = PIL.Image.fromarray(img)
+        #print(img.size)
         return img
+        
+        
+    
 class RandomErasing(object):
     """ Randomly selects a rectangle region in an image and erases its pixels.
         'Random Erasing Data Augmentation' by Zhong et al.
@@ -115,7 +131,7 @@ def list_pictures(directory, ext='jpg|jpeg|bmp|png|ppm'):
                    if re.match(r'([\w]+\.(?:' + ext + '))', f)])
 
 
-class Market1501(dataset.Dataset):
+class Reid_Dataset(dataset.Dataset):
     def __init__(self, transform, dtype, data_path):
 
         self.transform = transform
@@ -130,7 +146,7 @@ class Market1501(dataset.Dataset):
             self.data_path += '/query'
 
         self.imgs = [path for path in list_pictures(self.data_path) if self.id(path) != -1]
-
+        #print(self.imgs)
         self._id2label = {_id: idx for idx, _id in enumerate(self.unique_ids)}
 
     def __getitem__(self, index):
@@ -160,7 +176,7 @@ class Market1501(dataset.Dataset):
         :param file_path: unix style file path
         :return: camera id
         """
-        #if opt.data_path == 'msmt17_suning55':
+        #if cfg.data_path == 'msmt17_suning55':
         return int(file_path.split('/')[-1].split('_')[1])
         #else:
          #   return int(file_path.split('/')[-1].split('_')[1][1])
