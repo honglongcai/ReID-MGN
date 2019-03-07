@@ -46,7 +46,7 @@ class AttBlock13571(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d((h, w))
         # self.maxpool = nn.AdaptiveMaxPool2d((h, w))
         self.relu = nn.ReLU(inplace=True)
-        self.sigmoid = nn.Sigmoid()
+        self.tanh = nn.Tanh()
 
     def forward(self, x):
         out1 = self.conv1(x)
@@ -90,7 +90,7 @@ class AttBlock13571(nn.Module):
         out = self.conv10(out)
         out = self.bn10(out)
     
-        out = self.sigmoid(out)
+        out = self.tanh(out)
     
         return out
     
@@ -184,7 +184,7 @@ class MGN(nn.Module):
         x = self.backbone1(x)
         att_f = self.att(x)
         x = self.backbone2(x)
-        x = att_f * x
+        x = (1.0 + att_f) * x
         x = self.backbone3(x)
 
         p1 = self.p1(x)
