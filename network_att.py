@@ -158,6 +158,8 @@ class MGN(nn.Module):
         att_s = self.atts(x)
         att = att_c * (1.0 + att_s)
         x = self.backbone2(x)
+        print('x size:', x.size())
+        print('att size:', att.size())
         x = x * att
         x = self.backbone3(x)
 
