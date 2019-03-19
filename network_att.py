@@ -88,7 +88,7 @@ class MGN(nn.Module):
         self.backbone2 = resnet.layer2
         self.backbone3 = resnet.layer3[0]
         self.attc = ATTC(in_channels=256, out_channels=512)
-        self.atts = ATTS(in_channels=256, h=48, w=8)
+        self.atts = ATTS(in_channels=256, h=48, w=16)
         res_conv4 = nn.Sequential(*resnet.layer3[1:])
 
         res_g_conv5 = resnet.layer4
@@ -158,8 +158,6 @@ class MGN(nn.Module):
         att_s = self.atts(x)
         att = att_c * (1.0 + att_s)
         x = self.backbone2(x)
-        print('x size:', x.size())
-        print('att size:', att.size())
         x = x * att
         x = self.backbone3(x)
 
