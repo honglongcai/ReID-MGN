@@ -5,96 +5,67 @@ from opt import opt
 from torchvision.models.resnet import resnet50, resnet101, Bottleneck
 
 
-class AttBlock13571(nn.Module):
-    def __init__(self, in_channels, h, w):
-        super(AttBlock13571, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, in_channels // 4, kernel_size=1,
-                               stride=1)
-        self.bn1 = nn.BatchNorm2d(in_channels // 4)
-        
-        self.conv2 = nn.Conv2d(in_channels, in_channels // 4, kernel_size=1,
-                               stride=1)
-        self.bn2 = nn.BatchNorm2d(in_channels // 4)
-        self.conv3 = nn.Conv2d(in_channels // 4, in_channels // 4, kernel_size=3,
-                               stride=1, padding=1)
-        self.bn3 = nn.BatchNorm2d(in_channels // 4)
-        
-        self.conv4 = nn.Conv2d(in_channels, in_channels // 4, kernel_size=1,
-                               stride=1)
-        self.bn4 = nn.BatchNorm2d(in_channels // 4)
-        self.conv5 = nn.Conv2d(in_channels // 4, in_channels // 4, kernel_size=3,
-                               stride=1, padding=1)
-        self.bn5 = nn.BatchNorm2d(in_channels // 4)
-        self.conv6 = nn.Conv2d(in_channels // 4, in_channels // 4, kernel_size=3,
-                               stride=1, padding=1)
-        self.bn6 = nn.BatchNorm2d(in_channels // 4)
-        
-        self.conv7 = nn.Conv2d(in_channels, in_channels // 4, kernel_size=1,
-                               stride=1)
-        self.bn7 = nn.BatchNorm2d(in_channels // 4)
-        self.conv8 = nn.Conv2d(in_channels // 4, in_channels // 4, kernel_size=(1, 7),
-                               stride=1, padding=(0, 3))
-        self.bn8 = nn.BatchNorm2d(in_channels // 4)
-        self.conv9 = nn.Conv2d(in_channels // 4, in_channels // 4, kernel_size=(7, 1),
-                               stride=1, padding=(3, 0))
-        self.bn9 = nn.BatchNorm2d(in_channels // 4)
-        
-        self.conv10 = nn.Conv2d(in_channels, in_channels * 2,
-                                kernel_size=1, stride=1)
-        self.bn10 = nn.BatchNorm2d(in_channels * 2)
-        
-        self.avgpool = nn.AdaptiveAvgPool2d((h, w))
-        # self.maxpool = nn.AdaptiveMaxPool2d((h, w))
-        self.relu = nn.ReLU(inplace=True)
-        self.tanh = nn.Tanh()
-
+class ATTC(nn.Module):
+    def __init__(self, in_channels, out_channels, reduction=8):
+        super(ATTC, self).__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.fc = nn.Sequential(
+                nn.Linear(in_channels, in_channels // reduction),
+                nn.ReLU(inplace=True),
+                nn.Linear(in_channels // reduction, out_channels),
+                nn.Sigmoid()
+                )
     def forward(self, x):
-        out1 = self.conv1(x)
-        out1 = self.bn1(out1)
-        out1 = self.relu(out1)
-        out1 = self.avgpool(out1)
-        # out = self.maxpool(out)
-    
-        out2 = self.conv2(x)
-        out2 = self.bn2(out2)
-        out2 = self.relu(out2)
-        out2 = self.avgpool(out2)
-        # out = self.maxpool(out)
-        out2 = self.conv3(out2)
-        out2 = self.bn3(out2)
-        out2 = self.relu(out2)
-    
-        out3 = self.conv4(x)
-        out3 = self.bn4(out3)
-        out3 = self.relu(out3)
-        out3 = self.avgpool(out3)
-        out3 = self.conv5(out3)
-        out3 = self.bn5(out3)
-        out3 = self.relu(out3)
-        out3 = self.conv6(out3)
-        out3 = self.bn6(out3)
-        out3 = self.relu(out3)
-    
-        out4 = self.conv7(x)
-        out4 = self.bn7(out4)
-        out4 = self.relu(out4)
-        out4 = self.avgpool(out4)
-        out4 = self.conv8(out4)
-        out4 = self.bn8(out4)
-        out4 = self.relu(out4)
-        out4 = self.conv9(out4)
-        out4 = self.bn9(out4)
-        out4 = self.relu(out4)
-    
-        out = torch.cat((out1, out2, out3, out4), 1)
-        out = self.conv10(out)
-        out = self.bn10(out)
-    
-        out = self.tanh(out)
-    
-        return out
-    
+        b, c, _, _ = x.size()
+        y = self.avg_pool(x).view(b, c )
+        y = self.fc(y).view(b, self.out_channels, 1, 1)
+        return y
 
+
+class ATTS(nn.Module):
+    def __init__(self, in_channels, h, w, reduction=8, acti='sig'):
+        super(ATTS, self).__init__()
+        self.r1 = reduction
+        self.r2 = reduction ** 2
+        self.acti = acti
+        self.conv1 = nn.Conv2d(in_channels, in_channels // reduction, kernel_size=3,
+                               stride=1, padding=1)
+        self.bn1 = nn.BatchNorm2d(in_channels // reduction)
+        self.relu1 = nn.ReLU(True)
+        self.avgpool = nn.AdaptiveAvgPool2d((h, w))
+        
+        self.conv2 = nn.Conv2d(in_channels // reduction, in_channels // self.r2, kernel_size=3,
+                               stride=1, padding=1)
+        self.bn2 = nn.BatchNorm2d(in_channels // self.r2)
+        self.relu2 = nn.ReLU(True)
+        
+        self.conv3 = nn.Conv2d(in_channels // self.r2, 1, kernel_size=3,
+                               stride=1, padding=1)
+        self.hardtanh = nn.Hardtanh()
+        self.tanh = nn.Tanh()
+        self.sigmoid = nn.Sigmoid()
+    
+    def forward(self, x):
+        y = self.conv1(x)
+        y = self.bn1(y)
+        y = self.relu1(y)
+        y = self.avgpool(y)
+        y = self.conv2(y)
+        y = self.bn2(y)
+        y = self.relu2(y)
+        y = self.conv3(y)
+        if self.acti == 'hardtanh':
+            y = self.hardtanh(y)
+        elif self.acti == 'tanh':
+            y = self.tanh(y)
+        elif self.acti == 'sig':
+            y = self.sigmoid(y)
+        else:
+            print('ERROR.......')
+        return y
+    
 class MGN(nn.Module):
     def __init__(self):
         super(MGN, self).__init__()
@@ -116,7 +87,8 @@ class MGN(nn.Module):
         )
         self.backbone2 = resnet.layer2
         self.backbone3 = resnet.layer3[0]
-        self.att = AttBlock13571(256, 48, 16)
+        self.attc = ATTC(in_channels=256, out_channels=512)
+        self.atts = ATTS(in_channels=256, h=48, w=8)
         res_conv4 = nn.Sequential(*resnet.layer3[1:])
 
         res_g_conv5 = resnet.layer4
@@ -182,9 +154,11 @@ class MGN(nn.Module):
         #print('inside input size:', x.size())
         #print()
         x = self.backbone1(x)
-        att_f = self.att(x)
+        att_c = self.attc(x)
+        att_s = self.atts(x)
+        att = att_c * (1.0 + att_s)
         x = self.backbone2(x)
-        x = (1.0 + att_f) * x
+        x = x * att
         x = self.backbone3(x)
 
         p1 = self.p1(x)
