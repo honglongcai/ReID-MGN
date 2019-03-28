@@ -68,4 +68,8 @@ parser.add_argument("--cls_num",
                     default=7405,
                     help="train set id number")
 
+parser.add_argument("--train_name",
+                    type=str,
+                    default='weights')
+
 opt = parser.parse_args()
