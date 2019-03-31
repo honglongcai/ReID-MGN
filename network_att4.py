@@ -136,15 +136,15 @@ class MGN(nn.Module):
         elif opt.backbone == 'resnet101':
             resnet = resnet101(pretrained=True)
 
-        self.backbone1 = nn.Sequential(
+        self.backbone = nn.Sequential(
             resnet.conv1,
             resnet.bn1,
             resnet.relu,
             resnet.maxpool,
             resnet.layer1,
+            resnet.layer2,
+            resnet.layer3[0],
         )
-        self.backbone2 = resnet.layer2
-        self.backbone3 = resnet.layer3[0]
 
         res_conv4 = nn.Sequential(*resnet.layer3[1:])
 
@@ -156,12 +156,12 @@ class MGN(nn.Module):
             Bottleneck(2048, 512))
         res_p_conv5.load_state_dict(resnet.layer4.state_dict())
 
-        self.attc1 = ATTC(in_channels=256, out_channels=512)
-        self.atts1 = ATTS(in_channels=256, h=48, w=16)
-        self.attc2 = ATTC(in_channels=256, out_channels=512)
-        self.atts2 = ATTS(in_channels=256, h=48, w=16)
-        self.attc3 = ATTC(in_channels=256, out_channels=512)
-        self.atts3 = ATTS(in_channels=256, h=48, w=16)
+        self.attc1 = ATTC(in_channels=1024, out_channels=2048)
+        self.atts1 = ATTS(in_channels=1024, h=24, w=8)
+        self.attc2 = ATTC(in_channels=1024, out_channels=2048)
+        self.atts2 = ATTS(in_channels=1024, h=24, w=8)
+        self.attc3 = ATTC(in_channels=1024, out_channels=2048)
+        self.atts3 = ATTS(in_channels=1024, h=24, w=8)
         
         self.p1 = nn.Sequential(copy.deepcopy(res_conv4), copy.deepcopy(res_p_conv5))
         self.p2 = nn.Sequential(copy.deepcopy(res_conv4), copy.deepcopy(res_p_conv5))
@@ -217,17 +217,26 @@ class MGN(nn.Module):
         #print(x)
         #print('inside input size:', x.size())
         #print()
-        x = self.backbone1(x)
-        att_c = self.attc(x)
-        att_s = self.atts(x)
-        att = att_c * (1.0 + att_s)
-        x = self.backbone2(x)
-        x = x * att
-        x = self.backbone3(x)
+        x = self.backbone(x)
+        
+        att_c1 = self.attc1(x)
+        att_s1 = self.atts1(x)
+        att_c2 = self.attc2(x)
+        att_s2 = self.atts2(x)
+        att_c3 = self.attc3(x)
+        att_s3 = self.atts3(x)
+        
+        att1 = att_c1 * (1.0 + att_s1)
+        att2 = att_c2 * (1.0 + att_s2)
+        att3 = att_c3 * (1.0 + att_s3)
 
         p1 = self.p1(x)
         p2 = self.p2(x)
         p3 = self.p3(x)
+        
+        p1 = p1 * att1
+        p2 = p2 * att2
+        p3 = p3 * att3
 
         zg_p1 = self.maxpool_zg_p1(p1)
         zg_p2 = self.maxpool_zg_p2(p2)
