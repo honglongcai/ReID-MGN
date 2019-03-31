@@ -14,8 +14,7 @@ from opt import opt
 class Data:
     def __init__(self):
         train_transform = transforms.Compose([
-            RandomE(lower_c=0.1, lower_p=0.9,
-                    upper_c=0.2, upper_p=0.8, ratio=0.1),
+            RandomE(),
             transforms.Resize((384, 128), interpolation=3),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
@@ -40,38 +39,36 @@ class Data:
         self.test_loader = dataloader.DataLoader(self.testset, batch_size=opt.batchtest, num_workers=8,pin_memory=True)
         self.query_loader = dataloader.DataLoader(self.queryset, batch_size=opt.batchtest, num_workers=8,pin_memory=True)
 
+
 class RandomE():
-    def __init__(self, lower_c=0.1, lower_p=0.2,
-                 upper_c=0.9, upper_p=0.8, ratio=0.10):
-        self.lower_c = lower_c
-        self.lower_p = lower_p
-        self.upper_c = upper_c
-        self.upper_p = upper_p
-        
-        self.ratio = ratio
-        
+    def __init__(self, sig=0.05):
+        self.sig = sig
+    
     def __call__(self, img):
-        a = np.random.uniform()
+        a = random.uniform(0, 1)
         h = img.size[1]
-        r = np.random.uniform(0, self.ratio)
-        if a < 0.1:
-            img = PIL.ImageOps.expand(img, border=(0, int(h * r), 0, 0), fill='black')
-        elif a > 0.9:
-            img = PIL.ImageOps.expand(img, border=(0, 0, 0, int(h * r)), fill='black')
-        elif a < 0.2:
-            img = np.asarray(img)
-            s = int(h * r)
-            img = img[s:, :, :]
-            img = PIL.Image.fromarray(img)
+        w = img.size[0]
+        ratio = random.gauss(0, self.sig)
+        if a < 0.2:
+            if ratio < 0:
+                ratio = min(-ratio, 0.15)
+                s = int(h * ratio)
+                img = img.crop((0, s, w, h))
+            else:
+                ratio = min(ratio, 0.15)
+                s = int(h * ratio)
+                img = PIL.ImageOps.expand(img, border=(0, s, 0, 0), fill='black')
         elif a > 0.8:
-            img = np.asarray(img)
-            e = int(h * (1-r))
-            img = img[:e, :, :]
-            img = PIL.Image.fromarray(img)
-        #print(img.size)
+            if ratio < 0:
+                ratio = min(-ratio, 0.15)
+                e = int(h * (1 - ratio))
+                img = img.crop((0, 0, w, e))
+            else:
+                ratio = min(ratio, 0.15)
+                s = int(h * ratio)
+                img = PIL.ImageOps.expand(img, border=(0, 0, 0, s), fill='black')
+        
         return img
-        
-        
     
 class RandomErasing(object):
     """ Randomly selects a rectangle region in an image and erases its pixels.
