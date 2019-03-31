@@ -35,7 +35,9 @@ def cmc(distmat, query_ids=None, gallery_ids=None,
     indices = np.argsort(distmat, axis=1)
     print('gallery_ids:', gallery_ids)
     print('query_ids:', query_ids)
+    print('indices:', indices)
     matches = (gallery_ids[indices] == query_ids[:, np.newaxis])
+    print('matchs:', matches)
     # Compute CMC for each query
     ret = np.zeros(topk)
     num_valid_queries = 0
