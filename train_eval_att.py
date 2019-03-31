@@ -178,7 +178,7 @@ if __name__ == '__main__':
 
         for epoch in range(1, opt.epoch+1):
             print('\nepoch', epoch)
-            reid.train()
+            #reid.train()
             if epoch == 1:
                 print('\nstart evaluate')
                 reid.test()
