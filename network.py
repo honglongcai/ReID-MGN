@@ -26,7 +26,7 @@ class MGN(nn.Module):
             resnet.layer2,
             resnet.layer3[0],
         )
-
+        
         res_conv4 = nn.Sequential(*resnet.layer3[1:])
 
         res_g_conv5 = resnet.layer4
@@ -92,6 +92,8 @@ class MGN(nn.Module):
         #print('inside input size:', x.size())
         #print()
         x = self.backbone(x)
+        
+        print('x size:', x.size())
 
         p1 = self.p1(x)
         p2 = self.p2(x)
