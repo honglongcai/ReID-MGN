@@ -44,6 +44,8 @@ def cmc(distmat, query_ids=None, gallery_ids=None,
         if separate_camera_set:
             # Filter out samples from same camera
             valid &= (gallery_cams[indices[i]] != query_cams[i])
+        print(valid)
+        print(matches)
         if not np.any(matches[i, valid]):
             continue
         if single_gallery_shot:
