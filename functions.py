@@ -33,6 +33,8 @@ def cmc(distmat, query_ids=None, gallery_ids=None,
     gallery_cams = np.asarray(gallery_cams)
     # Sort and find correct matches
     indices = np.argsort(distmat, axis=1)
+    print('gallery_ids:', gallery_ids)
+    print('query_ids:', query_ids)
     matches = (gallery_ids[indices] == query_ids[:, np.newaxis])
     # Compute CMC for each query
     ret = np.zeros(topk)
@@ -44,8 +46,8 @@ def cmc(distmat, query_ids=None, gallery_ids=None,
         if separate_camera_set:
             # Filter out samples from same camera
             valid &= (gallery_cams[indices[i]] != query_cams[i])
-        print(valid)
-        print(matches)
+        #print(valid)
+        #print(matches)
         if not np.any(matches[i, valid]):
             continue
         if single_gallery_shot:
