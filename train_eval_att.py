@@ -178,8 +178,8 @@ if __name__ == '__main__':
 
         for epoch in range(1, opt.epoch+1):
             print('\nepoch', epoch)
-            reid.train()
-            if epoch % 10 == 0:
+            #reid.train()
+            if epoch == 1:
                 print('\nstart evaluate')
                 reid.test()
                 torch.save(model.state_dict(), (model_dir + '/model_{}.pt'.format(epoch)))
