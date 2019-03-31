@@ -59,7 +59,6 @@ class Main():
         gf = self.extract_feature(self.test_loader).numpy()
 
         #########################   re rank##########################
-        """
         q_g_dist = np.dot(qf, np.transpose(gf))
         q_q_dist = np.dot(qf, np.transpose(qf))
         g_g_dist = np.dot(gf, np.transpose(gf))
@@ -72,11 +71,10 @@ class Main():
 
         print('epoch:{:d} lr:{:.6f} [   re_rank] mAP: {:.4f} rank1: {:.4f} rank3: {:.4f} rank5: {:.4f} rank10: {:.4f}'
               .format(epoch, lr, m_ap, r[0], r[2], r[4], r[9]))
-        """
         #########################no re rank##########################
         dist = cdist(qf, gf)
         r = cmc(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras,
-                separate_camera_set=True,
+                separate_camera_set=False,
                 single_gallery_shot=False,
                 first_match_break=True)
         m_ap = mean_ap(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras)
@@ -88,7 +86,6 @@ class Main():
         gf = self.extract_feature(self.test_loader1).numpy()
 
         #########################   re rank##########################
-        """
         q_g_dist = np.dot(qf, np.transpose(gf))
         q_q_dist = np.dot(qf, np.transpose(qf))
         g_g_dist = np.dot(gf, np.transpose(gf))
@@ -101,11 +98,10 @@ class Main():
 
         print('epoch:{:d} lr:{:.6f} [   re_rank] mAP: {:.4f} rank1: {:.4f} rank3: {:.4f} rank5: {:.4f} rank10: {:.4f}'
               .format(epoch, lr, m_ap, r[0], r[2], r[4], r[9]))
-        """
         #########################no re rank##########################
         dist = cdist(qf, gf)
         r = cmc(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras,
-                separate_camera_set=True,
+                separate_camera_set=False,
                 single_gallery_shot=False,
                 first_match_break=True)
         m_ap = mean_ap(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras)
