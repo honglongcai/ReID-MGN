@@ -90,21 +90,21 @@ class Main():
         q_q_dist = np.dot(qf, np.transpose(qf))
         g_g_dist = np.dot(gf, np.transpose(gf))
         dist = re_ranking(q_g_dist, q_q_dist, g_g_dist)
-        r = cmc(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras,
+        r = cmc(dist, self.queryset1.ids, self.testset1.ids, self.queryset1.cameras, self.testset1.cameras,
                 separate_camera_set=False,
                 single_gallery_shot=False,
                 first_match_break=True)
-        m_ap = mean_ap(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras)
+        m_ap = mean_ap(dist, self.queryset1.ids, self.testset1.ids, self.queryset1.cameras, self.testset1.cameras)
 
         print('epoch:{:d} lr:{:.6f} [   re_rank] mAP: {:.4f} rank1: {:.4f} rank3: {:.4f} rank5: {:.4f} rank10: {:.4f}'
               .format(epoch, lr, m_ap, r[0], r[2], r[4], r[9]))
         #########################no re rank##########################
         dist = cdist(qf, gf)
-        r = cmc(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras,
+        r = cmc(dist, self.queryset1.ids, self.testset1.ids, self.queryset1.cameras, self.testset1.cameras,
                 separate_camera_set=False,
                 single_gallery_shot=False,
                 first_match_break=True)
-        m_ap = mean_ap(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras)
+        m_ap = mean_ap(dist, self.queryset1.ids, self.testset1.ids, self.queryset1.cameras, self.testset1.cameras)
 
         print('epoch:{:d} lr:{:.6f} [no re_rank] mAP: {:.4f} rank1: {:.4f} rank3: {:.4f} rank5: {:.4f} rank10: {:.4f}'
               .format(epoch, lr, m_ap, r[0], r[2], r[4], r[9]))
@@ -178,8 +178,8 @@ if __name__ == '__main__':
 
         for epoch in range(1, opt.epoch+1):
             print('\nepoch', epoch)
-            #reid.train()
-            if epoch == 1:
+            reid.train()
+            if epoch % 1 == 0:
                 print('\nstart evaluate')
                 reid.test()
                 torch.save(model.state_dict(), (model_dir + '/model_{}.pt'.format(epoch)))
