@@ -6,7 +6,7 @@ import torch
 from torch.optim import Adam, lr_scheduler
 
 from opt import opt
-from data_2_ex import Data
+from data_aug import Data
 from network_att2 import MGN
 from loss import Loss
 from functions import mean_ap, cmc, re_ranking
