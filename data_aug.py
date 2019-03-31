@@ -2,6 +2,8 @@ import os
 import re
 import math
 import random
+import numpy as np
+import PIL
 import collections
 from torchvision import transforms
 from torch.utils.data import dataset,dataloader,sampler
