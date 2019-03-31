@@ -18,8 +18,12 @@ class Main():
         self.train_loader = loader.train_loader
         self.test_loader = loader.test_loader
         self.query_loader = loader.query_loader
+        self.test_loader1 = loader.test_loader1
+        self.query_loader1 = loader.query_loader1
         self.testset = loader.testset
         self.queryset = loader.queryset
+        self.testset1 = loader.testset1
+        self.queryset1 = loader.queryset1
 
         self.model = model.to('cuda:0')
         self.loss = loss
@@ -78,6 +82,34 @@ class Main():
 
         print('epoch:{:d} lr:{:.6f} [no re_rank] mAP: {:.4f} rank1: {:.4f} rank3: {:.4f} rank5: {:.4f} rank10: {:.4f}'
               .format(epoch, lr, m_ap, r[0], r[2], r[4],r[9]))
+
+        qf = self.extract_feature(self.query_loader1).numpy()
+        gf = self.extract_feature(self.test_loader1).numpy()
+
+        #########################   re rank##########################
+        q_g_dist = np.dot(qf, np.transpose(gf))
+        q_q_dist = np.dot(qf, np.transpose(qf))
+        g_g_dist = np.dot(gf, np.transpose(gf))
+        dist = re_ranking(q_g_dist, q_q_dist, g_g_dist)
+        r = cmc(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras,
+                separate_camera_set=True,
+                single_gallery_shot=False,
+                first_match_break=True)
+        m_ap = mean_ap(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras)
+
+        print('epoch:{:d} lr:{:.6f} [   re_rank] mAP: {:.4f} rank1: {:.4f} rank3: {:.4f} rank5: {:.4f} rank10: {:.4f}'
+              .format(epoch, lr, m_ap, r[0], r[2], r[4], r[9]))
+
+        #########################no re rank##########################
+        dist = cdist(qf, gf)
+        r = cmc(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras,
+                separate_camera_set=True,
+                single_gallery_shot=False,
+                first_match_break=True)
+        m_ap = mean_ap(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras)
+
+        print('epoch:{:d} lr:{:.6f} [no re_rank] mAP: {:.4f} rank1: {:.4f} rank3: {:.4f} rank5: {:.4f} rank10: {:.4f}'
+              .format(epoch, lr, m_ap, r[0], r[2], r[4], r[9]))
 
     def get_optimizer(self, net):
 
@@ -149,7 +181,7 @@ if __name__ == '__main__':
         for epoch in range(1, opt.epoch+1):
             print('\nepoch', epoch)
             reid.train()
-            if epoch % 20 == 0:
+            if epoch % 2 == 0:
                 print('\nstart evaluate')
                 reid.test()
                 torch.save(model.state_dict(), (model_dir + '/model_{}.pt'.format(epoch)))

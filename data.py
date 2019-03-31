@@ -29,12 +29,17 @@ class Data:
         print('test_len:', len(self.testset))
         self.queryset = Market1501(test_transform, 'query',opt.data_path)
         print('query_len:', len(self.queryset))
+        self.testset1 = Market1501(test_transform, 'test1', opt.data_path)
+        print('test_len:', len(self.testset1))
+        self.queryset1 = Market1501(test_transform, 'query1', opt.data_path)
+        print('query_len:', len(self.queryset1))
         self.train_loader = dataloader.DataLoader(self.trainset,
                                                   sampler=RandomSampler(self.trainset, batch_id=opt.batchid, batch_image=opt.batchimage),
                                                   batch_size=opt.batchid*opt.batchimage, num_workers=8,pin_memory=True)
         self.test_loader = dataloader.DataLoader(self.testset, batch_size=opt.batchtest, num_workers=8,pin_memory=True)
         self.query_loader = dataloader.DataLoader(self.queryset, batch_size=opt.batchtest, num_workers=8,pin_memory=True)
-
+        self.test_loader1 = dataloader.DataLoader(self.testset1, batch_size=opt.batchtest, num_workers=8, pin_memory=True)
+        self.query_loader1 = dataloader.DataLoader(self.queryset1, batch_size=opt.batchtest, num_workers=8, pin_memory=True)
 
 class RandomErasing(object):
     """ Randomly selects a rectangle region in an image and erases its pixels.
@@ -105,8 +110,12 @@ class Market1501(dataset.Dataset):
             self.data_path += '/bounding_box_train'
         elif dtype == 'test':
             self.data_path += '/bounding_box_test'
-        else:
+        elif dtype == 'query':
             self.data_path += '/query'
+        elif dtype == 'test1':
+            self.data_path += '/bounding_box_test1'
+        elif dtype == 'query1':
+            self.data_path += '/query1'
 
         self.imgs = [path for path in list_pictures(self.data_path) if self.id(path) != -1]
 

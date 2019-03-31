@@ -149,7 +149,7 @@ class MGN(nn.Module):
         self.atts = ATTS(in_channels=256, h=48, w=16)
         res_conv4 = nn.Sequential(*resnet.layer3[1:])
 
-        res_g_conv5 = resnet.layer4
+        #res_g_conv5 = resnet.layer4
 
         res_p_conv5 = nn.Sequential(
             Bottleneck(1024, 512, downsample=nn.Sequential(nn.Conv2d(1024, 2048, 1, bias=False), nn.BatchNorm2d(2048))),
@@ -157,11 +157,11 @@ class MGN(nn.Module):
             Bottleneck(2048, 512))
         res_p_conv5.load_state_dict(resnet.layer4.state_dict())
 
-        self.p1 = nn.Sequential(copy.deepcopy(res_conv4), copy.deepcopy(res_g_conv5))
+        self.p1 = nn.Sequential(copy.deepcopy(res_conv4), copy.deepcopy(res_p_conv5))
         self.p2 = nn.Sequential(copy.deepcopy(res_conv4), copy.deepcopy(res_p_conv5))
         self.p3 = nn.Sequential(copy.deepcopy(res_conv4), copy.deepcopy(res_p_conv5))
 
-        self.maxpool_zg_p1 = nn.MaxPool2d(kernel_size=(12, 4))
+        self.maxpool_zg_p1 = nn.MaxPool2d(kernel_size=(24, 8))
         self.maxpool_zg_p2 = nn.MaxPool2d(kernel_size=(24, 8))
         self.maxpool_zg_p3 = nn.MaxPool2d(kernel_size=(24, 8))
         self.maxpool_zp2 = nn.MaxPool2d(kernel_size=(12, 8))
