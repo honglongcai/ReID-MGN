@@ -64,7 +64,7 @@ class Main():
         g_g_dist = np.dot(gf, np.transpose(gf))
         dist = re_ranking(q_g_dist, q_q_dist, g_g_dist)
         r = cmc(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras,
-                separate_camera_set=False,
+                separate_camera_set=True,
                 single_gallery_shot=False,
                 first_match_break=True)
         m_ap = mean_ap(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras)
@@ -74,7 +74,7 @@ class Main():
         #########################no re rank##########################
         dist = cdist(qf, gf)
         r = cmc(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras,
-                separate_camera_set=False,
+                separate_camera_set=True,
                 single_gallery_shot=False,
                 first_match_break=True)
         m_ap = mean_ap(dist, self.queryset.ids, self.testset.ids, self.queryset.cameras, self.testset.cameras)
@@ -91,7 +91,7 @@ class Main():
         g_g_dist = np.dot(gf, np.transpose(gf))
         dist = re_ranking(q_g_dist, q_q_dist, g_g_dist)
         r = cmc(dist, self.queryset1.ids, self.testset1.ids, self.queryset1.cameras, self.testset1.cameras,
-                separate_camera_set=False,
+                separate_camera_set=True,
                 single_gallery_shot=False,
                 first_match_break=True)
         m_ap = mean_ap(dist, self.queryset1.ids, self.testset1.ids, self.queryset1.cameras, self.testset1.cameras)
@@ -101,7 +101,7 @@ class Main():
         #########################no re rank##########################
         dist = cdist(qf, gf)
         r = cmc(dist, self.queryset1.ids, self.testset1.ids, self.queryset1.cameras, self.testset1.cameras,
-                separate_camera_set=False,
+                separate_camera_set=True,
                 single_gallery_shot=False,
                 first_match_break=True)
         m_ap = mean_ap(dist, self.queryset1.ids, self.testset1.ids, self.queryset1.cameras, self.testset1.cameras)
