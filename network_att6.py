@@ -170,8 +170,8 @@ class MGN(nn.Module):
         self.maxpool_zg_p1 = nn.MaxPool2d(kernel_size=(24, 8))
         self.maxpool_zg_p2 = nn.MaxPool2d(kernel_size=(24, 8))
         self.maxpool_zg_p3 = nn.MaxPool2d(kernel_size=(24, 8))
-        self.maxpool_zp2 = nn.MaxPool2d(kernel_size=(12, 8))
-        self.maxpool_zp3 = nn.MaxPool2d(kernel_size=(8, 8))
+        self.maxpool_zp2 = nn.MaxPool2d(kernel_size=(8, 8))
+        self.maxpool_zp3 = nn.MaxPool2d(kernel_size=(6, 8))
 
         self.reduction = nn.Sequential(nn.Conv2d(2048, feats, 1, bias=False), nn.BatchNorm2d(feats), nn.ReLU())
 
@@ -183,9 +183,11 @@ class MGN(nn.Module):
 
         self.fc_id_256_1_0 = nn.Linear(feats, num_classes)
         self.fc_id_256_1_1 = nn.Linear(feats, num_classes)
+        self.fc_id_256_1_2 = nn.Linear(feats, num_classes)
         self.fc_id_256_2_0 = nn.Linear(feats, num_classes)
         self.fc_id_256_2_1 = nn.Linear(feats, num_classes)
         self.fc_id_256_2_2 = nn.Linear(feats, num_classes)
+        self.fc_id_256_2_3 = nn.Linear(feats, num_classes)
 
         self._init_fc(self.fc_id_2048_0)
         self._init_fc(self.fc_id_2048_1)
@@ -193,9 +195,11 @@ class MGN(nn.Module):
 
         self._init_fc(self.fc_id_256_1_0)
         self._init_fc(self.fc_id_256_1_1)
+        self._init_fc(self.fc_id_256_1_2)
         self._init_fc(self.fc_id_256_2_0)
         self._init_fc(self.fc_id_256_2_1)
         self._init_fc(self.fc_id_256_2_2)
+        self._init_fc(self.fc_id_256_2_3)
 
     @staticmethod
     def _init_reduction(reduction):
@@ -245,32 +249,38 @@ class MGN(nn.Module):
         zp2 = self.maxpool_zp2(p2)
         z0_p2 = zp2[:, :, 0:1, :]
         z1_p2 = zp2[:, :, 1:2, :]
+        z2_p2 = zp2[:, :, 2:3, :]
 
         zp3 = self.maxpool_zp3(p3)
         z0_p3 = zp3[:, :, 0:1, :]
         z1_p3 = zp3[:, :, 1:2, :]
         z2_p3 = zp3[:, :, 2:3, :]
+        z3_p3 = zp3[:, :, 3:4, :]
 
         fg_p1 = self.reduction(zg_p1).squeeze(dim=3).squeeze(dim=2)
         fg_p2 = self.reduction(zg_p2).squeeze(dim=3).squeeze(dim=2)
         fg_p3 = self.reduction(zg_p3).squeeze(dim=3).squeeze(dim=2)
         f0_p2 = self.reduction(z0_p2).squeeze(dim=3).squeeze(dim=2)
         f1_p2 = self.reduction(z1_p2).squeeze(dim=3).squeeze(dim=2)
+        f2_p2 = self.reduction(z2_p2).squeeze(dim=3).squeeze(dim=2)
         f0_p3 = self.reduction(z0_p3).squeeze(dim=3).squeeze(dim=2)
         f1_p3 = self.reduction(z1_p3).squeeze(dim=3).squeeze(dim=2)
         f2_p3 = self.reduction(z2_p3).squeeze(dim=3).squeeze(dim=2)
+        f3_p3 = self.reduction(z3_p3).squeeze(dim=3).squeeze(dim=2)
 
         l_p1 = self.fc_id_2048_0(fg_p1)
-        l_p2 = self.fc_id_2048_1(fg_p2)
-        l_p3 = self.fc_id_2048_2(fg_p3)
+        #l_p2 = self.fc_id_2048_1(fg_p2)
+        #l_p3 = self.fc_id_2048_2(fg_p3)
 
         l0_p2 = self.fc_id_256_1_0(f0_p2)
         l1_p2 = self.fc_id_256_1_1(f1_p2)
+        l2_p2 = self.fc_id_256_1_1(f2_p2)
         l0_p3 = self.fc_id_256_2_0(f0_p3)
         l1_p3 = self.fc_id_256_2_1(f1_p3)
         l2_p3 = self.fc_id_256_2_2(f2_p3)
+        l3_p3 = self.fc_id_256_2_2(f3_p3)
 
-        predict = torch.cat([fg_p1, fg_p2, fg_p3, f0_p2, f1_p2, f0_p3, f1_p3, f2_p3], dim=1)
+        predict = torch.cat([fg_p1, f0_p2, f1_p2, f2_p2, f0_p3, f1_p3, f2_p3, f3_p3], dim=1)
 
-        return predict, fg_p1, fg_p2, fg_p3, l_p1, l_p2, l_p3, l0_p2, l1_p2, l0_p3, l1_p3, l2_p3
+        return predict, fg_p1, fg_p2, fg_p3, l_p1, l0_p2, l1_p2, l2_p2, l0_p3, l1_p3, l2_p3, l3_p3
 
