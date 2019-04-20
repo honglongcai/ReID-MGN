@@ -167,11 +167,11 @@ class MGN(nn.Module):
         self.p2 = nn.Sequential(copy.deepcopy(res_conv4), copy.deepcopy(res_p_conv5))
         self.p3 = nn.Sequential(copy.deepcopy(res_conv4), copy.deepcopy(res_p_conv5))
 
-        self.maxpool_zg_p1 = nn.MaxPool2d(kernel_size=(24, 8))
-        self.maxpool_zg_p2 = nn.MaxPool2d(kernel_size=(24, 8))
-        self.maxpool_zg_p3 = nn.MaxPool2d(kernel_size=(24, 8))
-        self.maxpool_zp2 = nn.MaxPool2d(kernel_size=(12, 8))
-        self.maxpool_zp3 = nn.MaxPool2d(kernel_size=(8, 8))
+        self.maxpool_zg_p1 = nn.MaxPool2d(kernel_size=(18, 9))
+        self.maxpool_zg_p2 = nn.MaxPool2d(kernel_size=(18, 9))
+        self.maxpool_zg_p3 = nn.MaxPool2d(kernel_size=(18, 9))
+        self.maxpool_zp2 = nn.MaxPool2d(kernel_size=(9, 9))
+        self.maxpool_zp3 = nn.MaxPool2d(kernel_size=(6, 9))
 
         self.reduction = nn.Sequential(nn.Conv2d(2048, feats, 1, bias=False), nn.BatchNorm2d(feats), nn.ReLU())
 
