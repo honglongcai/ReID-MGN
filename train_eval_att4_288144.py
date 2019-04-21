@@ -6,8 +6,8 @@ import torch
 from torch.optim import Adam, lr_scheduler
 
 from opt import opt
-from data_288144 import Data
-from network_att4_288144 import MGN
+from data_384144 import Data
+from network_att4_384144 import MGN
 from loss import Loss
 from functions import mean_ap, cmc, re_ranking
 os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpuid
