@@ -131,27 +131,27 @@ class Main():
         return inputs.index_select(3, inv_idx)
 
     def extract_feature(self, loader):
-        features = torch.FloatTensor()
-        for (inputs, labels) in loader:
-            #print('labels:', labels)
-            ff = torch.FloatTensor(inputs.size(0), 2048).zero_()
-            for i in range(2):
-                if i == 1:
-                    inputs = self.fliphor(inputs)
-                #if i == 0:
-                    #print('input_shape:', inputs)
-                input_img = inputs.to('cuda')
-                outputs = self.model(input_img)
-                f = outputs[0].data.cpu()
-                #print('f:', f)
-                ff = ff + f
-                #print('ff:', ff)
-            #print()
-            #print()
+        with torch.no_grad():
+            features = torch.FloatTensor()
+            for (inputs, labels) in loader:
+                #print('labels:', labels)
+                ff = torch.FloatTensor(inputs.size(0), 2048).zero_()
+                for i in range(2):
+                    if i == 1:
+                        inputs = self.fliphor(inputs)
+                    #if i == 0:
+                        #print('input_shape:', inputs)
+                    input_img = inputs.to('cuda')
+                    outputs = self.model(input_img)
+                    f = outputs[0].data.cpu()
+                    #print('f:', f)
+                    ff = ff + f
+                    #print('ff:', ff)
+                #print()
 
-            fnorm = torch.norm(ff, p=2, dim=1, keepdim=True)
-            ff = ff.div(fnorm.expand_as(ff))
-            features = torch.cat((features, ff), 0)
+                fnorm = torch.norm(ff, p=2, dim=1, keepdim=True)
+                ff = ff.div(fnorm.expand_as(ff))
+                features = torch.cat((features, ff), 0)
         return features
 
 
