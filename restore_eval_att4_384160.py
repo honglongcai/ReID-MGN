@@ -6,8 +6,8 @@ import torch
 from torch.optim import Adam, lr_scheduler
 
 from opt import opt
-from data_ne import Data
-from network_att4 import MGN
+from data_384160 import Data
+from network_att4_384160 import MGN
 from loss import Loss
 from functions import mean_ap, cmc, re_ranking
 os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpuid
@@ -162,6 +162,7 @@ if __name__ == '__main__':
     
     #print(torch.cuda.device_count())
     model = torch.nn.DataParallel(model, output_device=1)
+    model.load_state_dict(torch.load(opt.weight))
     loss = Loss()
     reid = Main(model, loss, loader)
     #print(opt.data_path)
@@ -177,7 +178,7 @@ if __name__ == '__main__':
         os.makedirs(model_dir)
     if opt.mode == 'train':
 
-        for epoch in range(1, opt.epoch+1):
+        for epoch in range(341, opt.epoch+1):
             print('\nepoch', epoch)
             reid.train()
             if epoch % 10 == 0:
