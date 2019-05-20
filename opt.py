@@ -66,7 +66,7 @@ parser.add_argument("--gamma",
 parser.add_argument("--cls_num",
                     type=int,
                     default=7405,
-                    help="train set id number")
+                    help="train set id number, 7405 or 8872")
 
 parser.add_argument("--train_name",
                     type=str,
