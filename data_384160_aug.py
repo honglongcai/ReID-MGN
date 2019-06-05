@@ -65,11 +65,11 @@ class RandomE():
         elif a > 0.8:
             if ratio < 0:
                 ratio = min(-ratio, 0.15)
-                e = int(h * (1 - ratio))
+                e = int(h * (1 - ratio * 1.5))
                 img = img.crop((0, 0, w, e))
             else:
                 ratio = min(ratio, 0.15)
-                s = int(h * ratio)
+                s = int(h * ratio * 1.5)
                 img = PIL.ImageOps.expand(img, border=(0, 0, 0, s), fill='black')
         
         return img
